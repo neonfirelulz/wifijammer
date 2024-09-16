@@ -1,4 +1,4 @@
-import os
+\import os
 import time
 import subprocess
 import threading
@@ -11,19 +11,16 @@ def deauth_attack(interface, bssid, client_mac):
 
 def scan_for_targets(interface):
     # Scan for nearby access points
-    scan_output = subprocess.check_output(["iwlist", interface, "scan"])
+    scan_output = subprocess.check_output(["iw", interface, "scan"])
     scan_results = scan_output.decode("utf-8")
     
     targets = []
     for line in scan_results.split("\n"):
-        if "Address:" in line:
-            bssid = line.split("Address: ")[1]
-        elif "ESSID:" in line:
-            essid = line.split('"')[1]
-        elif "Extra:" in line:
-            if "Station" in line:
-                client_mac = line.split("Station: ")[1]
-                targets.append((bssid, client_mac))
+        if "BSS" in line:
+            bssid = line.split("BSS")[1].strip().split("(on")[0].strip()
+        elif "Station" in line:
+            client_mac = line.split("Station: ")[1]
+            targets.append((bssid, client_mac))
     
     return targets
 
